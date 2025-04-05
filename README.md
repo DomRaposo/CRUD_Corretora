@@ -1,4 +1,5 @@
-![Tela Cadastro e Tabelas](imagens/WhatsApp Image 2025-04-04 at 21.44.01.jpeg)
+![Tela Cadastro e Tabelas](https://github.com/DomRaposo/CRUD_Corretora/raw/main/imagens/WhatsApp%20Image%202025-04-04%20at%2021.44.01.jpeg)
+
 
 ![Tela Edit](imagens/WhatsApp Image 2025-04-04 at 21.44.20.jpeg)
 
