@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Corretor;
 use Illuminate\Http\Request;
-use App\Services\CpfValidatorService;
+use App\Rules\CpfValido;
+use Illuminate\Validation\Rule;
+
+
 
 class CorretorController extends Controller
 {
@@ -30,29 +33,17 @@ class CorretorController extends Controller
      */
     public function store(Request $request)
     {
-        // Remove caracteres não numéricos do CPF antes da validação
-        $cpf = preg_replace('/\D/', '', $request->cpf);
-
-        // Validação dos dados
         $request->validate([
             'nome' => 'required|min:2',
-            'cpf' => [
-                'required',
-                'regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', // Valida formato 000.000.000-00
-                function ($attribute, $value, $fail) use ($cpf) {
-                    if (!CpfValidatorService::validarCPF($cpf)) {
-                        $fail('O CPF informado é inválido.');
-                    }
-                },
-                'unique:corretores,cpf'
-            ],
+            'cpf' => ['required', 'unique:corretores,cpf', new CpfValido],
             'creci' => 'required|min:2',
+    ],[
+            'cpf.regex' => 'O CPF deve estar no formato 000.000.000-00, com pontuação.',
         ]);
 
-        // Criar e salvar o corretor
         Corretor::create([
             'nome' => $request->nome,
-            'cpf' => $cpf, // Salva sem pontuação no banco
+            'cpf' => $request->cpf,
             'creci' => $request->creci,
         ]);
 
@@ -79,16 +70,20 @@ class CorretorController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Corretor $corretor)
-    {
-        $request->validate([
+{
+    //dd($request->all());
+
+    $request->validate([
         'nome' => 'required|min:2',
-        'cpf' => 'required|size:11|unique:corretores,cpf,' . $corretor->id,
-        'creci' => 'required|min:2',]);
+        'cpf' => 'required',
+        'creci' => 'required|min:2',
+    ]);
 
-        $corretor->update($request->all());
+    $corretor->update($request->only(['cpf', 'nome', 'creci']));
 
-        return redirect()->route('corretores.index')->with('success', 'Corretor atualizado com sucesso!');
-    }
+    return redirect()->route('corretores.index')->with('success', 'Corretor atualizado com sucesso!');
+
+}
 
 
     /**

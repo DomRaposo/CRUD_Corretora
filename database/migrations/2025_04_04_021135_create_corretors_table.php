@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('corretores', function (Blueprint $table) {
             $table->id();
             $table->string('nome')->min(2);
-            $table->string('cpf', 11)->unique();
+            $table->string('cpf', 14)->unique();
             $table->string('creci')->min(2);
             $table->timestamps();
         });
